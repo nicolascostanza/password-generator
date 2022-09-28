@@ -2,14 +2,15 @@ import styles from "./app.module.css";
 import { useState } from "react";
 import checkimg from "./img/checkimg.png";
 import uncheckimg from "./img/uncheckimg.png";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 function App() {
-  const [lengthPassword, setLengthPassword] = useState(8);
-  const [mayusculas, setMayusculas] = useState(false);
-  const [numeros, setNumeros] = useState(false);
-  const [simbolos, setSimbolos] = useState(false);
-  const [result, setResult] = useState("");
-  const [textbtn, settextbtn] = useState("Copiar");
+  const [lengthPassword, setLengthPassword] = useState<number>(8);
+  const [mayusculas, setMayusculas] = useState<boolean>(false);
+  const [numeros, setNumeros] = useState<boolean>(false);
+  const [simbolos, setSimbolos] = useState<boolean>(false);
+  const [result, setResult] = useState<string>("");
+  const [textbtn, settextbtn] = useState<"Copiar" | "Copiado !">("Copiar");
   function resultado() {
     const configuracion: any = {
       numeroDeCaracteres: lengthPassword,
@@ -23,35 +24,24 @@ function App() {
       mayusculas: "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z",
       minusculas: "a b c d e f g h i j k l m n o p q r s t u v w x y z",
     };
-
-    let caracteresFinales: any = "";
-    let password = "";
-
+    let caracteresFinales: string | string[] = "";
+    let password: string = "";
     for (let propiedad in configuracion) {
       if (configuracion[propiedad] === true) {
         caracteresFinales += caracteres[propiedad] + " ";
       }
     }
-
     caracteresFinales += caracteres.minusculas;
     caracteresFinales = caracteresFinales.trim();
-
     caracteresFinales = caracteresFinales.split(" ");
-
     for (let i = 0; i < configuracion.numeroDeCaracteres; i++) {
       password +=
         caracteresFinales[Math.floor(Math.random() * caracteresFinales.length)];
     }
-
     setResult(password);
   }
   const copiarInfo = () => {
     settextbtn("Copiado !");
-    let aux = document.createElement("input");
-    aux.setAttribute("value", result);
-    document.body.appendChild(aux);
-    aux.select();
-    document.execCommand("copy");
     setTimeout(() => {
       settextbtn("Copiar");
     }, 2000);
@@ -62,11 +52,12 @@ function App() {
       <div className={styles.container}>
         <h2 className={styles.title}>Generador de Contraseñas</h2>
         <div className={styles.boxResult}>
-          <h4 className={styles.subtitle}>Constraseña</h4>
           <h3 className={styles.resultText}>{result}</h3>
-          <button className={styles.btnCopy} onClick={() => copiarInfo()}>
-            {textbtn}
-          </button>
+          <CopyToClipboard text={result}>
+            <button onClick={copiarInfo} className={styles.btnCopy}>
+              {textbtn}
+            </button>
+          </CopyToClipboard>
         </div>
         <div>
           <label htmlFor="Length">Longitud de la contraseña</label>
